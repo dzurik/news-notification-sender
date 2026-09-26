@@ -16,7 +16,7 @@ export interface ArticleModel {
   author: string;
   content: string;
   description: string;
-  publishedAt: Date;
+  publishedAt: Date | string;
   source: {
     id: string;
     name: string;

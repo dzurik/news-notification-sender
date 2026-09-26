@@ -4,6 +4,9 @@ import { Header } from './shared/components/header/header';
 import { NewsService } from './services/news-service';
 import { NewsCategory, NewsModel, UpdatedNewsModel } from './shared/types/news.types';
 import { forkJoin, interval, map } from 'rxjs';
+import { EmailService } from './services/email-service';
+import { EmailModel } from './shared/types/email.types';
+import { SubscriberModel } from './shared/types/subscribe.types';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +16,7 @@ import { forkJoin, interval, map } from 'rxjs';
 })
 export class App implements OnInit {
   newsService = inject(NewsService);
+  emailService = inject(EmailService);
 
   private timeBetweenNewFetchInMilliseconds: number = 600000; //10perc
 
@@ -20,8 +24,6 @@ export class App implements OnInit {
     let subscribedCategories = this.getSubscribedCategories();
     if (subscribedCategories.length) {
       this.getArticlesByCategories(subscribedCategories);
-
-      console.log(subscribedCategories);
     }
 
     // interval 10percenként lekérjük azokat a híreket amikre van létező feliratkozás, leiratkozás nem fog kelleni az intervalról, mert úgy is azt szeretnénk akkor ne működjön csak, ha már bezártuk az oldalt
@@ -30,27 +32,24 @@ export class App implements OnInit {
       // mivel az open API eléggé korlátolt megjelenített hírek számában, ezért érdemesebb minden topicot egyszer lekérni, mintsem az összeset
 
       if (subscribedCategories.length) {
-        this.getArticlesByCategories(subscribedCategories);
-
-        console.log(subscribedCategories);
+        // this.getArticlesByCategories(subscribedCategories);
       }
     });
   }
 
   getSubscribedCategories(): NewsCategory[] {
-    let subscribersList = JSON.parse(localStorage.getItem('Subscribers')!) ?? [];
+    let subscribersList: SubscriberModel[] = JSON.parse(localStorage.getItem('Subscribers')!) ?? [];
+    let subscribedCategory: NewsCategory[] = [];
 
-    subscribersList = [
-      'business',
-      'entertainment',
-      'general',
-      'health',
-      'science',
-      'sports',
-      'technology',
-    ];
+    subscribersList.forEach((sub) => {
+      sub.categories.forEach((category) => {
+        if (!subscribedCategory.includes(category)) subscribedCategory.push(category);
+      });
+    });
 
-    return subscribersList;
+    subscribedCategory = ['sports']; //TODO a korlátozás miatt majd kivenni
+
+    return subscribedCategory;
   }
 
   getArticlesByCategories(subscribedCategories: NewsCategory[]) {
@@ -67,11 +66,37 @@ export class App implements OnInit {
       next: (response: UpdatedNewsModel[]) => {
         // értesítés küldés
 
+        this.emailNotificationSend({
+          email: 'dzurikskill@hotmail.com',
+          title: response[0].articles[0].title,
+          message: response[0].articles[0].description,
+          source: response[0].articles[0].source?.name,
+          sourceUrl: response[0].articles[0].urlToImage,
+          url: response[0].articles[0].url,
+        });
+
         console.log(response);
       },
       error: (err) => {
         console.log(err);
       },
     });
+  }
+
+  async emailNotificationSend(emailData: EmailModel) {
+    try {
+      await this.emailService.sendEmail({
+        toEmail: emailData.email,
+        title: emailData.title,
+        message: emailData.message,
+        source: emailData.source,
+        sourceUrl: emailData.sourceUrl,
+        url: emailData.url,
+      });
+
+      console.log('Success');
+    } catch (error) {
+      console.error('Email sending failed', error);
+    }
   }
 }
