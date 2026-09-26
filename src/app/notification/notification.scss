@@ -1,0 +1,17 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  width: 30rem;
+}
+
+.form-input {
+  border: 1px solid #000;
+
+  &--error {
+    border: 1px solid #ff0000;
+  }
+}
+
+.button-submit {
+  margin-top: 1rem;
+}
