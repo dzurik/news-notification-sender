@@ -1,0 +1,8 @@
+<div class="modal-container">
+  <div class="question" [innerHTML]="data.questionText"></div>
+
+  <div class="flex-between">
+    <button (click)="confirmAnswer(false)">Back</button>
+    <button (click)="confirmAnswer(true)">Yes</button>
+  </div>
+</div>

@@ -54,3 +54,31 @@
     }
   </div>
 </div>
+
+<div class="box">
+  <div class="flex-between">
+    <h2>Slack webhook paths</h2>
+    <button type="submit" class="add-submit" (click)="addSlack()">Add Slack</button>
+  </div>
+
+  <div class="list">
+    <div class="list__header list__header--type3">
+      <div class="list__title">Webhook url</div>
+      <div class="list__title">Operations</div>
+    </div>
+
+    @for (slack of slackWebhooksList(); track slack.id; let i = $index) {
+      <div class="list__item list__item--type3" [class.alter-bg]="i % 2 == 1">
+        <div class="list__value">{{ slack.url }}</div>
+        <div class="list__value">
+          <img
+            src="img/trash-can.png"
+            class="icon"
+            (click)="unSubscribeSlack(slack.id)"
+            title="Delete slack"
+          />
+        </div>
+      </div>
+    }
+  </div>
+</div>

@@ -11,6 +11,9 @@
     &--type2 {
       grid-template-columns: repeat(6, 1fr);
     }
+    &--type3 {
+      grid-template-columns: 1fr 10rem;
+    }
   }
   &__item {
     display: grid;
@@ -21,6 +24,10 @@
 
     &--type2 {
       grid-template-columns: repeat(6, 1fr);
+    }
+
+    &--type3 {
+      grid-template-columns: 1fr 10rem;
     }
   }
   &__title {
@@ -39,5 +46,18 @@
 
 .icon {
   width: 2rem;
+  cursor: pointer;
+}
+
+.add-submit {
+  margin-top: 2rem;
+
+  border: 0;
+  padding: 0.5rem 3rem;
+  background: #be00e4;
+  color: #fff;
+  font-size: 1.6rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
   cursor: pointer;
 }

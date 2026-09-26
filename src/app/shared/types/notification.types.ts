@@ -36,6 +36,11 @@ export interface SlackNotificationModel {
   url: string;
 }
 
+export interface SlackWebhookModel {
+  id: string;
+  url: string;
+}
+
 export enum NotificationStatus {
   Sent = 'Sent',
   Error = 'Error',

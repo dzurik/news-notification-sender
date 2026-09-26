@@ -10,6 +10,7 @@ import {
   NotificationItemModel,
   NotificationStatus,
   NotificationType,
+  SlackWebhookModel,
 } from './shared/types/notification.types';
 import { SubscriberModel } from './shared/types/subscribe.types';
 import { v4 as uuidv4 } from 'uuid';
@@ -57,7 +58,7 @@ export class App implements OnInit {
       });
     });
 
-    subscribedCategory = ['sports']; //TODO Tesztelhetőség miatt van benne a korlátozás, mert ha túl sokszor van lekérdezve, 24órát kell várni
+    //subscribedCategory = ['sports']; //TODO Tesztelhetőség miatt van benne a korlátozás, mert ha túl sokszor van lekérdezve, 24órát kell várni
 
     return subscribedCategory;
   }
@@ -117,67 +118,72 @@ export class App implements OnInit {
               news.articles.forEach((article) => {
                 //email kiküldés
                 if (sub.emailNotification) {
-                  // this.emailNotificationSend(
-                  // {
-                  //   email: sub.email,
-                  //   title: article.title,
-                  //   message: article.description,
-                  //   source: article.source?.name,
-                  //   sourceUrl: article.urlToImage,
-                  //   url: article.url,
-                  // },
-                  //   news.category,
-                  // );
-                }
-
-                //slack kiküldés
-                if (sub.slackNotification) {
-                  this.slackService
-                    .sendMessage({
+                  this.emailNotificationSend(
+                    {
+                      email: sub.email,
+                      title: article.title,
                       message: article.description,
                       source: article.source?.name,
                       sourceUrl: article.urlToImage,
                       url: article.url,
-                    })
-                    .subscribe({
-                      next: (response) => {
-                        this.sendingLogging(
-                          false,
-                          true,
-                          {
-                            email: sub.email,
-                            title: article.title,
-                            message: article.description,
-                            source: article.source?.name,
-                            sourceUrl: article.urlToImage,
-                            url: article.url,
-                          },
-                          news.category,
-                        );
-                      },
-                      error: (error) => {
-                        this.sendingLogging(
-                          false,
-                          false,
-                          {
-                            email: sub.email,
-                            title: article.title,
-                            message: article.description,
-                            source: article.source?.name,
-                            sourceUrl: article.urlToImage,
-                            url: article.url,
-                          },
-                          news.category,
-                        );
-                      },
-                    });
+                    },
+                    news.category,
+                  );
+                }
+
+                //slack kiküldés
+                if (sub.slackNotification) {
+                  let slackWebhooksList: SlackWebhookModel[] =
+                    JSON.parse(localStorage.getItem('Slacks')!) ?? [];
+
+                  slackWebhooksList.forEach((slack) => {
+                    this.slackService
+                      .sendMessage(slack.url, {
+                        message: article.description,
+                        source: article.source?.name,
+                        sourceUrl: article.urlToImage,
+                        url: article.url,
+                      })
+                      .subscribe({
+                        next: (response) => {
+                          this.sendingLogging(
+                            false,
+                            true,
+                            {
+                              email: sub.email,
+                              title: article.title,
+                              message: article.description,
+                              source: article.source?.name,
+                              sourceUrl: article.urlToImage,
+                              url: article.url,
+                            },
+                            news.category,
+                          );
+                        },
+                        error: (error) => {
+                          this.sendingLogging(
+                            false,
+                            false,
+                            {
+                              email: sub.email,
+                              title: article.title,
+                              message: article.description,
+                              source: article.source?.name,
+                              sourceUrl: article.urlToImage,
+                              url: article.url,
+                            },
+                            news.category,
+                          );
+                        },
+                      });
+                  });
                 }
               });
             }
           });
         });
 
-        console.log(response);
+  
       },
       error: (err) => {
         console.log(err);
@@ -225,7 +231,7 @@ export class App implements OnInit {
     localStorage.setItem('Notifications', JSON.stringify(updatableSentNotificationList));
     this.emailService.notificationRefresh();
 
-    if (isSuccess) this.toastr.success('Email sent successfully');
-    else this.toastr.error('Email sent failed');
+    if (isSuccess) this.toastr.success(`${isEmail ? 'Email' : 'Slack'} sent successfully`);
+    else this.toastr.error(`${isEmail ? 'Email' : 'Slack'} sent failed`);
   }
 }
