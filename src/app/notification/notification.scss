@@ -1,3 +1,9 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .form {
   display: flex;
   flex-direction: column;
@@ -6,6 +12,7 @@
 
 .form-input {
   border: 1px solid #000;
+  padding: 1rem;
 
   &--error {
     border: 1px solid #ff0000;
@@ -14,6 +21,15 @@
 
 .button-submit {
   margin-top: 2rem;
+
+  border: 0;
+  padding: 1rem 5rem;
+  background: #be00e4;
+  color: #fff;
+  font-size: 2rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 .categories {

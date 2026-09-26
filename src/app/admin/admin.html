@@ -1,5 +1,5 @@
 <div class="box">
-  <h3>Subscribers</h3>
+  <h2>Subscribers</h2>
 
   <div class="list">
     <div class="list__header">
@@ -17,7 +17,12 @@
         <div class="list__value">{{ subscriber.emailNotification ? 'Yes' : '-' }}</div>
         <div class="list__value">{{ subscriber.slackNotification ? 'Yes' : '-' }}</div>
         <div class="list__value">
-          <img src="img/trash-can.png" class="icon" (click)="unSubscribeEmail(subscriber.id)" />
+          <img
+            src="img/trash-can.png"
+            class="icon"
+            (click)="unSubscribeEmail(subscriber.id)"
+            title="Delete subscription"
+          />
         </div>
       </div>
     }
@@ -25,7 +30,7 @@
 </div>
 
 <div class="box">
-  <h3>Sent emails</h3>
+  <h2>Sent emails</h2>
 
   <div class="list">
     <div class="list__header list__header--type2">

@@ -17,14 +17,19 @@
     grid-template-columns: repeat(5, 1fr);
     margin-bottom: 1rem;
     align-items: center;
+    padding: 1rem;
 
     &--type2 {
       grid-template-columns: repeat(6, 1fr);
     }
   }
   &__title {
+    font-weight: 600;
+    font-size: 1.8rem;
   }
   &__value {
+    display: flex;
+    align-items: center;
   }
 }
 

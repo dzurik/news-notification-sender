@@ -1,6 +1,8 @@
+<div class="container">
 <h1>News Subscribe</h1>
 
 <form [formGroup]="notificationForm" (ngSubmit)="subscribeForEmail()" class="form">
+  <h3>Enter email address</h3>
   <input
     type="text"
     class="form-input"
@@ -14,7 +16,7 @@
   />
 
   <div class="categories">
-    <p>Categories</p>
+    <h3>Choose news categories</h3>
     <label>
       <input type="checkbox" formControlName="allCategory" />
       All
@@ -28,7 +30,7 @@
   </div>
 
   <div class="categories">
-    <p>Subscribe type</p>
+    <h3>Choose subscribe types</h3>
 
     @for (type of subscribeTypes; track type) {
       <label>
@@ -42,3 +44,6 @@
     Subscribe
   </button>
 </form>
+
+</div>
+
