@@ -1,14 +1,4 @@
-<h1>Hírekre feliratkozás</h1>
-
-<!--
-checkboxok category feliratkozásokhoz
-business
-entertainment
-general
-health
-science
-sports
-technology -->
+<h1>News Subscribe</h1>
 
 <form [formGroup]="notificationForm" (ngSubmit)="subscribeForEmail()" class="form">
   <input
@@ -16,14 +6,39 @@ technology -->
     class="form-input"
     formControlName="emailAddress"
     name="email"
-    placeholder="Írd be az email címed!"
+    placeholder="Enter email address"
     [class.form-input--error]="
       notificationForm.controls.emailAddress.touched &&
       notificationForm.controls.emailAddress.invalid
     "
   />
 
+  <div class="categories">
+    <p>Categories</p>
+    <label>
+      <input type="checkbox" formControlName="allCategory" />
+      All
+    </label>
+    @for (category of newsCategories; track category) {
+      <label>
+        <input type="checkbox" formControlName="{{ category }}" />
+        {{ category | titlecase }}
+      </label>
+    }
+  </div>
+
+  <div class="categories">
+    <p>Subscribe type</p>
+
+    @for (type of subscribeTypes; track type) {
+      <label>
+        <input type="checkbox" formControlName="{{ type }}" />
+        {{ type | titlecase }}
+      </label>
+    }
+  </div>
+
   <button type="submit" class="button-submit" [disabled]="notificationForm.invalid">
-    Feliratkozás
+    Subscribe
   </button>
 </form>

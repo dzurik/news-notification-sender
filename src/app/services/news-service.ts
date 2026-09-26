@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { NewsCategory } from '../shared/types/news.types';
+import { NewsCategory, NewsModel, UpdatedNewsModel } from '../shared/types/news.types';
 
 @Injectable({
   providedIn: 'root',
@@ -11,10 +11,10 @@ export class NewsService {
 
   private apiKey = 'c29786a8112c491e835212c7cfbbd3ee'; // API kulcsot nem tárolunk így normális esetben, biztonsági okokból
 
-  getNews(category: NewsCategory | undefined = undefined): Observable<any> {
+  getNewsByCategory(category: NewsCategory | undefined = undefined): Observable<NewsModel> {
     let specificCategory: string = category ? `&category=${category}` : '';
 
-    return this.http.get<any>(
+    return this.http.get<NewsModel>(
       `https://newsapi.org/v2/top-headlines?apiKey=${this.apiKey}&language=en${specificCategory}`,
     );
   }
