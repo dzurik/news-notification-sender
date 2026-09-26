@@ -1,1 +1,51 @@
-<p>admin works!</p>
+<div class="box">
+  <h3>Subscribers</h3>
+
+  <div class="list">
+    <div class="list__header">
+      <div class="list__title">Email</div>
+      <div class="list__title">Categories</div>
+      <div class="list__title">Email subscription</div>
+      <div class="list__title">Slack subscription</div>
+      <div class="list__title">Operations</div>
+    </div>
+
+    @for (subscriber of subscribedList(); track subscriber.id; let i = $index) {
+      <div class="list__item" [class.alter-bg]="i % 2 == 1">
+        <div class="list__value">{{ subscriber.email }}</div>
+        <div class="list__value">{{ subscriber.categories.join(' ,') }}</div>
+        <div class="list__value">{{ subscriber.emailNotification ? 'Yes' : '-' }}</div>
+        <div class="list__value">{{ subscriber.slackNotification ? 'Yes' : '-' }}</div>
+        <div class="list__value">
+          <img src="img/trash-can.png" class="icon" (click)="unSubscribeEmail(subscriber.id)" />
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+<div class="box">
+  <h3>Sent emails</h3>
+
+  <div class="list">
+    <div class="list__header list__header--type2">
+      <div class="list__title">Email recipient</div>
+      <div class="list__title">Category</div>
+      <div class="list__title">Article</div>
+      <div class="list__title">Sent time</div>
+      <div class="list__title">Notification type</div>
+      <div class="list__title">Status</div>
+    </div>
+
+    @for (notification of sentNotificationList(); track notification.id; let i = $index) {
+      <div class="list__item list__item--type2" [class.alter-bg]="i % 2 == 1">
+        <div class="list__value">{{ notification.recipient }}</div>
+        <div class="list__value">{{ notification.category }}</div>
+        <div class="list__value">{{ notification.articleTitle }}</div>
+        <div class="list__value">{{ notification.sentAt | date: 'yyyy-mm-dd  HH:mm' }}</div>
+        <div class="list__value">{{ notification.notificationType }}</div>
+        <div class="list__value">{{ notification.status }}</div>
+      </div>
+    }
+  </div>
+</div>

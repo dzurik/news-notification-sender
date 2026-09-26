@@ -14,7 +14,7 @@ import { ToastrService } from 'ngx-toastr';
   styleUrl: './notification.scss',
 })
 export class Notification implements OnInit {
-  toastr = inject(ToastrService);
+  private toastr = inject(ToastrService);
 
   newsCategories: NewsCategory[] = [
     'business',

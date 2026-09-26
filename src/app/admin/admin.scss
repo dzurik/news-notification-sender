@@ -1,0 +1,38 @@
+.list {
+  display: flex;
+  flex-direction: column;
+
+  &__header {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+
+    border-bottom: 1px solid #000;
+
+    &--type2 {
+      grid-template-columns: repeat(6, 1fr);
+    }
+  }
+  &__item {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    margin-bottom: 1rem;
+    align-items: center;
+
+    &--type2 {
+      grid-template-columns: repeat(6, 1fr);
+    }
+  }
+  &__title {
+  }
+  &__value {
+  }
+}
+
+.alter-bg {
+  background-color: #c4c2c2;
+}
+
+.icon {
+  width: 2rem;
+  cursor: pointer;
+}
