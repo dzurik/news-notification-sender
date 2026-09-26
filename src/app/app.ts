@@ -14,6 +14,7 @@ import {
 import { SubscriberModel } from './shared/types/subscribe.types';
 import { v4 as uuidv4 } from 'uuid';
 import { ToastrService } from 'ngx-toastr';
+import { SlackService } from './services/slack-service';
 
 @Component({
   selector: 'app-root',
@@ -25,6 +26,7 @@ export class App implements OnInit {
   private newsService = inject(NewsService);
   private emailService = inject(EmailService);
   private toastr = inject(ToastrService);
+  private slackService = inject(SlackService);
 
   private timeBetweenNewFetchInMilliseconds: number = 600000; //10perc
 
@@ -55,7 +57,7 @@ export class App implements OnInit {
       });
     });
 
-    subscribedCategory = ['business']; //TODO Tesztelhetőség miatt van benne a korlátozás, mert ha túl sokszor van lekérdezve, 24órát kell várni
+    subscribedCategory = ['sports']; //TODO Tesztelhetőség miatt van benne a korlátozás, mert ha túl sokszor van lekérdezve, 24órát kell várni
 
     return subscribedCategory;
   }
@@ -114,19 +116,61 @@ export class App implements OnInit {
             if (sub.categories.includes(news.category)) {
               news.articles.forEach((article) => {
                 //email kiküldés
-
                 if (sub.emailNotification) {
-                  this.emailNotificationSend(
-                    {
-                      email: sub.email,
-                      title: article.title,
+                  // this.emailNotificationSend(
+                  // {
+                  //   email: sub.email,
+                  //   title: article.title,
+                  //   message: article.description,
+                  //   source: article.source?.name,
+                  //   sourceUrl: article.urlToImage,
+                  //   url: article.url,
+                  // },
+                  //   news.category,
+                  // );
+                }
+
+                //slack kiküldés
+                if (sub.slackNotification) {
+                  this.slackService
+                    .sendMessage({
                       message: article.description,
                       source: article.source?.name,
                       sourceUrl: article.urlToImage,
                       url: article.url,
-                    },
-                    news.category,
-                  );
+                    })
+                    .subscribe({
+                      next: (response) => {
+                        this.sendingLogging(
+                          false,
+                          true,
+                          {
+                            email: sub.email,
+                            title: article.title,
+                            message: article.description,
+                            source: article.source?.name,
+                            sourceUrl: article.urlToImage,
+                            url: article.url,
+                          },
+                          news.category,
+                        );
+                      },
+                      error: (error) => {
+                        this.sendingLogging(
+                          false,
+                          false,
+                          {
+                            email: sub.email,
+                            title: article.title,
+                            message: article.description,
+                            source: article.source?.name,
+                            sourceUrl: article.urlToImage,
+                            url: article.url,
+                          },
+                          news.category,
+                        );
+                      },
+                    });
                 }
               });
             }
@@ -152,42 +196,36 @@ export class App implements OnInit {
         url: emailData.url,
       });
 
-      let updatableSentNotificationList: NotificationItemModel[] =
-        JSON.parse(localStorage.getItem('Notifications')!) ?? [];
-
-      updatableSentNotificationList.push({
-        id: uuidv4(),
-        recipient: emailData.email,
-        category: category,
-        articleTitle: emailData.title,
-        sentAt: new Date(),
-        notificationType: NotificationType.Email,
-        status: NotificationStatus.Sent,
-      });
-
-      localStorage.setItem('Notifications', JSON.stringify(updatableSentNotificationList));
-      this.emailService.notificationRefresh();
-
-      this.toastr.success('Email sent successfully');
+      this.sendingLogging(true, true, emailData, category);
     } catch (error) {
       //logolás akkor is megtörténik mikor nem sikerült kiküldeni, lehetne bővíteni a listát újraküldés funkcióval
-      let updatableSentNotificationList: NotificationItemModel[] =
-        JSON.parse(localStorage.getItem('Notifications')!) ?? [];
-
-      updatableSentNotificationList.push({
-        id: uuidv4(),
-        recipient: emailData.email,
-        category: category,
-        articleTitle: emailData.title,
-        sentAt: new Date(),
-        notificationType: NotificationType.Email,
-        status: NotificationStatus.Error,
-      });
-      localStorage.setItem('Notifications', JSON.stringify(updatableSentNotificationList));
-
-      this.emailService.notificationRefresh();
-
-      this.toastr.error('Email sent failed');
+      this.sendingLogging(true, false, emailData, category);
     }
+  }
+
+  sendingLogging(
+    isEmail: boolean,
+    isSuccess: boolean,
+    emailData: EmailModel,
+    category: NewsCategory,
+  ): void {
+    let updatableSentNotificationList: NotificationItemModel[] =
+      JSON.parse(localStorage.getItem('Notifications')!) ?? [];
+
+    updatableSentNotificationList.push({
+      id: uuidv4(),
+      recipient: emailData.email,
+      category: category,
+      articleTitle: emailData.title,
+      sentAt: new Date(),
+      notificationType: isEmail ? NotificationType.Email : NotificationType.Slack,
+      status: isSuccess ? NotificationStatus.Sent : NotificationStatus.Error,
+    });
+
+    localStorage.setItem('Notifications', JSON.stringify(updatableSentNotificationList));
+    this.emailService.notificationRefresh();
+
+    if (isSuccess) this.toastr.success('Email sent successfully');
+    else this.toastr.error('Email sent failed');
   }
 }

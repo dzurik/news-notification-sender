@@ -29,6 +29,13 @@ export interface NotificationItemModel {
   status: NotificationStatus;
 }
 
+export interface SlackNotificationModel {
+  message: string;
+  source: string;
+  sourceUrl: string;
+  url: string;
+}
+
 export enum NotificationStatus {
   Sent = 'Sent',
   Error = 'Error',

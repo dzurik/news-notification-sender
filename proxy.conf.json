@@ -1,0 +1,10 @@
+{
+  "/slack-webhook": {
+    "target": "https://hooks.slack.com",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/slack-webhook": "/services/T0C4S54P8BT/B0C4TT2F2BE/T62bQpLXFolZbdvYlLJ0g6mX"
+    }
+  }
+}
