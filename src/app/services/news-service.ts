@@ -9,7 +9,6 @@ import { NewsCategory, NewsModel, UpdatedNewsModel } from '../shared/types/news.
 export class NewsService {
   private http = inject(HttpClient);
 
-  //régi c29786a8112c491e835212c7cfbbd3ee
   private apiKey = '0ab75e8810af44f4a90ec8f8eb72b5f1'; // API kulcsot nem tárolunk így normális esetben, biztonsági okokból
 
   getNewsByCategory(category: NewsCategory | undefined = undefined): Observable<NewsModel> {

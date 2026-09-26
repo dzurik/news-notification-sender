@@ -9,8 +9,6 @@ import { SlackNotificationModel } from '../shared/types/notification.types';
 export class SlackService {
   private http = inject(HttpClient);
 
-  // webhookPath = '/services/T0C4S54P8BT/B0C4TT2F2BE/T62bQpLXFolZbdvYlLJ0g6mX';
-
   sendMessage(webhook: string, notification: SlackNotificationModel): Observable<string> {
     return this.http.post(
       webhook,
